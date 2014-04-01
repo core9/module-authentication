@@ -1,0 +1,16 @@
+package io.core9.module.auth;
+
+import io.core9.core.executor.Executor;
+import io.core9.core.plugin.Core9Plugin;
+import io.core9.plugin.server.request.Request;
+
+public interface AuthenticationPlugin extends Core9Plugin, Executor {
+	
+	/**
+	 * Return the user from the request
+	 * @param req
+	 * @return the user object
+	 */
+	User getUser(Request req);
+
+}

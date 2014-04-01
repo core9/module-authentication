@@ -1,0 +1,8 @@
+language: java
+env:
+  global:
+  - TERM=dumb
+  - secure: A3CS+wNCfjo5iZkup0bV9v/0lfbCop8I4qJke3pJobcAVXcaiFSbE6ptkWHkgFRgzbDwTBNZYwvY/ULYsICaI+0bHGMS9prxrBolN9/0+XSl30MjnqtP2vR2teM/QahTaMKVnV7AUKbpZ39CkB3g9Qnt9omJj5EGlN0nDtiAEhM=
+  - secure: L1pBAnm8AQUc+bCr0owC2Oe6WD+fbcN/GhMJelT38xEmZvWvZw8H8WhF02wq52DAF7++DTL2omkJv+iap5q8Cy0l8VO5DAEGZPY5Ux1RzvrdgOFRC7UO0HLY9lRGI7j75eRDMwDaaohnANle8RjAPm4Jh/X7pwmmKwSEkfR++oY=
+install:
+- ./gradlew clean test build publish publishBintray
