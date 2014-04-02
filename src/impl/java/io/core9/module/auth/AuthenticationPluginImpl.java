@@ -50,7 +50,12 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 					String password = (String) map.get("password");
 					try {
 						subject.login(new ServerRequestToken(request, username, password));
-						request.getResponse().end();
+						String path = (String) map.get("path");
+						if(path != null) {
+							request.getResponse().sendRedirect(301, path);
+						} else {
+							request.getResponse().end();
+						}
 					} catch (AuthenticationException e) {
 						request.getResponse().setStatusCode(401);
 						request.getResponse().addValue("content", "Login failed, please supply an existing username/password combination");
