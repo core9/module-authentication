@@ -49,4 +49,10 @@ public interface User {
 	 * @return
 	 */
 	public boolean isPermitted(Set<String> permissions);
+	
+	/**
+	 * Return the user session
+	 * @return
+	 */
+	public Session getSession();
 }

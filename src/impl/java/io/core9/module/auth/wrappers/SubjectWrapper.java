@@ -2,6 +2,7 @@ package io.core9.module.auth.wrappers;
 
 import java.util.Set;
 
+import io.core9.module.auth.Session;
 import io.core9.module.auth.User;
 
 import org.apache.shiro.subject.Subject;
@@ -57,6 +58,11 @@ public class SubjectWrapper implements User {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public Session getSession() {
+		return new SessionWrapper(subject.getSession());
 	}
 	
 }
