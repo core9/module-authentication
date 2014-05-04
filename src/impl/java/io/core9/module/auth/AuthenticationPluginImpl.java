@@ -101,6 +101,7 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
         	}
         	req.putContext(REQ_SUBJECT_KEY, currentUser);
         }
+        currentUser.getSession().touch();
         return currentUser;
 	}
 }
