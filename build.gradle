@@ -23,5 +23,4 @@ dependencies {
 	apiCompile 'io.core9:core-api:+'
 	apiCompile 'io.core9:module-server-api:+'
 	implCompile 'org.apache.shiro:shiro-core:+'
-	implCompile 'io.core9:module-server-vertx-api:+' //TODO remove
 }

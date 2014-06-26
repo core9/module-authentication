@@ -3,9 +3,9 @@ package io.core9.module.auth;
 import io.core9.module.auth.wrappers.ServerRequestToken;
 import io.core9.module.auth.wrappers.SubjectWrapper;
 import io.core9.plugin.server.Cookie;
+import io.core9.plugin.server.Server;
 import io.core9.plugin.server.handler.Middleware;
 import io.core9.plugin.server.request.Request;
-import io.core9.plugin.server.vertx.VertxServer;
 
 import java.util.Map;
 
@@ -26,7 +26,7 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	private static final String REQ_SUBJECT_KEY = "auth.subject";
 	
 	@InjectPlugin
-	private VertxServer server;
+	private Server server;
 	
 	@InjectPlugin
 	private AuthenticationConnector connector;
@@ -44,7 +44,7 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 			public void handle(Request request) {
 				switch(request.getMethod()) {
 				case POST:
-					Map<String,Object> map = request.getBodyAsMap();
+					Map<String,Object> map = request.getBodyAsMap().toBlocking().last();
 					Subject subject = getSubject(request);
 					String username = (String) map.get("username");
 					String password = (String) map.get("password");
