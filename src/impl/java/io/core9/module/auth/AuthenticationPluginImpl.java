@@ -45,7 +45,7 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	public void execute() {
 		DefaultSecurityManager manager = authenticationConnector.getSecurityManager();
 		if(manager != null) {
-			SecurityUtils.setSecurityManager(authenticationConnector.getSecurityManager());
+			SecurityUtils.setSecurityManager(manager);
 		} else {
 			manager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
 		}
