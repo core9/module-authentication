@@ -17,6 +17,7 @@ import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
@@ -31,18 +32,11 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	@InjectPlugin
 	private Server server;
 	
+	@InjectPlugin
+	private AuthenticationConnector authenticationConnector;
+	
+	@InjectPlugin
 	private SessionConnector sessionsConnector;
-	private DefaultSecurityManager manager;
-	
-	@PluginLoaded
-	public void onAuthenticationConnectorAvailable(AuthenticationConnector connector) {
-		manager = connector.getSecurityManager();
-	}
-	
-	@PluginLoaded
-	public void onSessionConnectorAvailable(SessionConnector sessionConnector) {
-		this.sessionsConnector = sessionConnector;
-	}
 
 	@Override
 	public User getUser(Request req) {
@@ -51,8 +45,9 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 
 	@Override
 	public void execute() {
+		DefaultSecurityManager manager = authenticationConnector.getSecurityManager();
 		if(manager != null) {
-			SecurityUtils.setSecurityManager(manager);
+			SecurityUtils.setSecurityManager(authenticationConnector.getSecurityManager());
 		} else {
 			manager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
 		}
