@@ -21,7 +21,6 @@ import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
 
 @PluginImplementation
@@ -32,7 +31,7 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	@InjectPlugin
 	private Server server;
 	
-	private SessionDAO sessions;
+	private SessionConnector sessionsConnector;
 	private DefaultSecurityManager manager;
 	
 	@PluginLoaded
@@ -42,7 +41,7 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	
 	@PluginLoaded
 	public void onSessionConnectorAvailable(SessionConnector sessionConnector) {
-		sessions = sessionConnector.getSessionDAO();
+		this.sessionsConnector = sessionConnector;
 	}
 
 	@Override
@@ -57,8 +56,10 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 		} else {
 			manager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
 		}
-		if(sessions != null) {
-			((DefaultSessionManager) manager.getSessionManager()).setSessionDAO(sessions);
+		if(sessionsConnector != null) {
+			DefaultSessionManager sessionManager = (DefaultSessionManager) manager.getSessionManager();
+			sessionManager.setSessionDAO(sessionsConnector.getSessionDAO());
+			sessionManager.setSessionFactory(sessionsConnector.getSessionFactory());
 		}
 		server.use("/system/login", new Middleware() {
 			@Override
