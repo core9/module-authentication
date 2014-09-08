@@ -11,13 +11,11 @@ import io.core9.plugin.server.request.Request;
 import java.util.Map;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
-import net.xeoh.plugins.base.annotations.events.PluginLoaded;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
