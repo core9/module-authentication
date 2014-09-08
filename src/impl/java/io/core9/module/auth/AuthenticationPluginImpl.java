@@ -1,5 +1,6 @@
 package io.core9.module.auth;
 
+import io.core9.module.auth.session.SessionConnector;
 import io.core9.module.auth.wrappers.ServerRequestToken;
 import io.core9.module.auth.wrappers.SubjectWrapper;
 import io.core9.plugin.server.Cookie;
@@ -10,14 +11,17 @@ import io.core9.plugin.server.request.Request;
 import java.util.Map;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import net.xeoh.plugins.base.annotations.events.PluginLoaded;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
 
 @PluginImplementation
@@ -28,8 +32,18 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	@InjectPlugin
 	private Server server;
 	
-	@InjectPlugin
-	private AuthenticationConnector connector;
+	private SessionDAO sessions;
+	private DefaultSecurityManager manager;
+	
+	@PluginLoaded
+	public void onAuthenticationConnectorAvailable(AuthenticationConnector connector) {
+		manager = connector.getSecurityManager();
+	}
+	
+	@PluginLoaded
+	public void onSessionConnectorAvailable(SessionConnector sessionConnector) {
+		sessions = sessionConnector.getSessionDAO();
+	}
 
 	@Override
 	public User getUser(Request req) {
@@ -38,7 +52,14 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 
 	@Override
 	public void execute() {
-		SecurityUtils.setSecurityManager(connector.getSecurityManager());
+		if(manager != null) {
+			SecurityUtils.setSecurityManager(manager);
+		} else {
+			manager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
+		}
+		if(sessions != null) {
+			((DefaultSessionManager) manager.getSessionManager()).setSessionDAO(sessions);
+		}
 		server.use("/system/login", new Middleware() {
 			@Override
 			public void handle(Request request) {
