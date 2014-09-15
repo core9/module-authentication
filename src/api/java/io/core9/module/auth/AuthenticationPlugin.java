@@ -2,6 +2,7 @@ package io.core9.module.auth;
 
 import io.core9.core.executor.Executor;
 import io.core9.core.plugin.Core9Plugin;
+import io.core9.plugin.server.Cookie;
 import io.core9.plugin.server.request.Request;
 
 public interface AuthenticationPlugin extends Core9Plugin, Executor {
@@ -12,5 +13,13 @@ public interface AuthenticationPlugin extends Core9Plugin, Executor {
 	 * @return the user object
 	 */
 	User getUser(Request req);
+
+	/**
+	 * Return the user, identified by a cookie
+	 * @param req
+	 * @param cookie
+	 * @return
+	 */
+	User getUser(Request req, Cookie cookie);
 
 }

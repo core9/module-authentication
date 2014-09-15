@@ -40,7 +40,12 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	public User getUser(Request req) {
         return new SubjectWrapper(getSubject(req));
 	}
-
+	
+	@Override
+	public User getUser(Request req, Cookie cookie) {
+        return new SubjectWrapper(getSubject(req));
+	}
+	
 	@Override
 	public void execute() {
 		DefaultSecurityManager manager = authenticationConnector.getSecurityManager();
@@ -90,9 +95,15 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	 * @return
 	 */
 	private Subject getSubject(Request req) {
+        return getSubject(req, req.getCookie("CORE9SESSIONID"));
+	}
+	
+	/**
+	 * Return the subject identified by cookie
+	 */
+	private Subject getSubject(Request req, Cookie cookie) {
 		Subject currentUser = req.getContext(REQ_SUBJECT_KEY);
         if (currentUser == null) {
-        	Cookie cookie = req.getCookie("CORE9SESSIONID");
         	Subject.Builder builder = new Subject.Builder();
         	if(cookie != null) {
         		// Try to build an existing session
