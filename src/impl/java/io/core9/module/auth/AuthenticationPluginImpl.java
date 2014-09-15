@@ -43,7 +43,7 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	
 	@Override
 	public User getUser(Request req, Cookie cookie) {
-        return new SubjectWrapper(getSubject(req));
+        return new SubjectWrapper(getSubject(req, cookie));
 	}
 	
 	@Override
@@ -95,39 +95,40 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
 	 * @return
 	 */
 	private Subject getSubject(Request req) {
-        return getSubject(req, req.getCookie("CORE9SESSIONID"));
+		Subject currentUser = req.getContext(REQ_SUBJECT_KEY);
+		if(currentUser == null) {
+			currentUser = getSubject(req, req.getCookie("CORE9SESSIONID"));
+		}
+		currentUser.getSession().touch();
+        return currentUser;
 	}
 	
 	/**
 	 * Return the subject identified by cookie
 	 */
 	private Subject getSubject(Request req, Cookie cookie) {
-		Subject currentUser = req.getContext(REQ_SUBJECT_KEY);
-        if (currentUser == null) {
-        	Subject.Builder builder = new Subject.Builder();
-        	if(cookie != null) {
-        		// Try to build an existing session
-        		SessionsSecurityManager o = (SessionsSecurityManager) SecurityUtils.getSecurityManager();
-        		Session session = null;
-        		try {
-        			session = ((DefaultSessionManager) o.getSessionManager()).getSessionDAO().readSession(cookie.getValue());
-        			builder = builder.sessionId(session.getId());
-        		} catch (SessionException e) {
-        			// Unset existing cookie, as the session doesn't exist
-        			cookie.setMaxAge(-10);
-        			req.getResponse().addCookie(cookie);
-        			cookie = null;
-        		}
-        	}
-        	currentUser = builder.buildSubject();
-        	if(cookie == null) {
-        		cookie = server.newCookie("CORE9SESSIONID", currentUser.getSession(true).getId().toString());
-        		cookie.setPath("/");
-        		req.getResponse().addCookie(cookie);
-        	}
-        	req.putContext(REQ_SUBJECT_KEY, currentUser);
-        }
-        currentUser.getSession().touch();
+    	Subject.Builder builder = new Subject.Builder();
+    	if(cookie != null) {
+    		// Try to build an existing session
+    		SessionsSecurityManager o = (SessionsSecurityManager) SecurityUtils.getSecurityManager();
+    		Session session = null;
+    		try {
+    			session = ((DefaultSessionManager) o.getSessionManager()).getSessionDAO().readSession(cookie.getValue());
+    			builder = builder.sessionId(session.getId());
+    		} catch (SessionException e) {
+    			// Unset existing cookie, as the session doesn't exist
+    			cookie.setMaxAge(-10);
+    			req.getResponse().addCookie(cookie);
+    			cookie = null;
+    		}
+    	}
+    	Subject currentUser = builder.buildSubject();
+    	if(cookie == null) {
+    		cookie = server.newCookie("CORE9SESSIONID", currentUser.getSession(true).getId().toString());
+    		cookie.setPath("/");
+    		req.getResponse().addCookie(cookie);
+    	}
+    	req.putContext(REQ_SUBJECT_KEY, currentUser);
         return currentUser;
 	}
 }
