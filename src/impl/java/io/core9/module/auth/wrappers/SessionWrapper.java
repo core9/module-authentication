@@ -26,4 +26,9 @@ public class SessionWrapper implements Session {
 		this.session = session;
 	}
 
+	@Override
+	public void setTimeout(long maxIdleTimeInMillis) {
+		this.session.setTimeout(maxIdleTimeInMillis);
+	}
+
 }

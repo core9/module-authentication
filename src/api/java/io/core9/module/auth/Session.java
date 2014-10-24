@@ -9,4 +9,6 @@ public interface Session {
 	
 	Object removeAttribute(Object key);
 	
+	void setTimeout(long maxIdleTimeInMillis);
+	
 }
