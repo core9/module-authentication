@@ -21,5 +21,12 @@ public interface AuthenticationPlugin extends Core9Plugin, Executor {
 	 * @return
 	 */
 	User getUser(Request req, Cookie cookie);
+	
+	/**
+	 * Return the session by id, or null if not found/expired
+	 * @param sessionId
+	 * @return
+	 */
+	Session getSessionById(String sessionId);
 
 }

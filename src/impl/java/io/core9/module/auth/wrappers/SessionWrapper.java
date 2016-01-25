@@ -31,4 +31,9 @@ public class SessionWrapper implements Session {
 		this.session.setTimeout(maxIdleTimeInMillis);
 	}
 
+	@Override
+	public String getId() {
+		return this.session.getId().toString();
+	}
+
 }

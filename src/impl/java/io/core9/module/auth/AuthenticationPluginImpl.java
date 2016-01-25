@@ -131,4 +131,31 @@ public class AuthenticationPluginImpl implements AuthenticationPlugin {
     	req.putContext(REQ_SUBJECT_KEY, currentUser);
         return currentUser;
 	}
+	
+	/**
+	 * Return the subject identified by cookie
+	 */
+	private Subject getSubject(String sessionId) {
+    	Subject.Builder builder = new Subject.Builder();
+    	SessionsSecurityManager o = (SessionsSecurityManager) SecurityUtils.getSecurityManager();
+    	Session session = null;
+    	try {
+    		session = ((DefaultSessionManager) o.getSessionManager()).getSessionDAO().readSession(sessionId);
+    		builder = builder.sessionId(session.getId());
+    	} catch (SessionException e) {
+    		return null;
+    	}
+    	Subject currentUser = builder.buildSubject();
+        return currentUser;
+	}
+
+	@Override
+	public io.core9.module.auth.Session getSessionById(String sessionId) {
+		Subject user = getSubject(sessionId);
+		if(user != null) {
+			return new SubjectWrapper(user).getSession();
+		} else {
+			return null;
+		}
+	}
 }

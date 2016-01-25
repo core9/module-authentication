@@ -2,6 +2,8 @@ package io.core9.module.auth;
 
 
 public interface Session {
+	
+	String getId();
 
 	Object getAttribute(Object key);
 	
