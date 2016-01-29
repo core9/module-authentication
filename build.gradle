@@ -4,8 +4,6 @@
 
 apply from: 'http://www.core9.io/buildfiles/gradle/source.gradle'
 apply from: 'http://www.core9.io/buildfiles/gradle/publish.gradle'
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
 
 buildscript {
 	apply from: 'http://www.core9.io/buildfiles/gradle/publish-build.gradle'
